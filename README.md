@@ -40,7 +40,7 @@ This gem expects some standard Aws SDK configuration and some not so standard. T
 The not so standard configuration is specifiying ENV['AWS_DEFAULT_REGION'] for the AWS region you are using KMS in. KMS key IDs and operations are region specific. This will be moved to an overrideable initialization parameter. I forgot.
 
 ###Notes
-This gem has been developed against Ruby 2.1.5, Rails 4.2, and AWS SDK v2.
+This gem has been developed against Ruby 2.1.5, Rails 4.2, and AWS SDK v2. Credit where credit is due, I used strongbox by spikex as an inspiration and guide when creating this. https://github.com/spikex/strongbox
 
 ###Disclaimer
 I make no claims about enhanced security when using this gem.
