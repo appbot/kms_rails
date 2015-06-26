@@ -28,7 +28,7 @@ kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   context_key: Proc.new { }, context_value: Proc.new { }
 ```
 
-You can also toggle wether or not the model instance should retain decrypted values. Default is false. Change to true if you want to reduce the AWS API calls made for constant decryption. I cannot comment on the security implications enabling or disabling retaining.
+You can also toggle whether or not the model instance should retain decrypted values. Default is false. Change to true if you want to reduce the AWS API calls made for constant decryption. I cannot comment on the security implications enabling or disabling retaining.
 ```
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   retain: true
