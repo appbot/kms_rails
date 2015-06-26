@@ -1,5 +1,3 @@
-require 'kms_attrs'
-
 Gem::Specification.new do |s|
   s.name = 'kms_attrs'
   s.version = '0.0.1'
