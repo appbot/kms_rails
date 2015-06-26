@@ -49,6 +49,7 @@ I make no claims about enhanced security when using this gem.
 * Tests
 * Choose your own encryption method
 * Choose your own KMS key type
+* Specify AWS region in configuration
 
 ###Read more about AWS KMS
 * http://aws.amazon.com/kms/
