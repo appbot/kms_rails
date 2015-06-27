@@ -3,13 +3,13 @@
 kms_attrs is a gem for easily adding Amazon Web Services KMS encryption to your ActiveRecord model attributes. It uses the GenerateDataKey method to perform "envelope" encryption locally with an OpenSSL AES-256-CBC cipher.
 
 To use, simply put the following code in your models for the fields you want to encrypt:
-```
+```ruby
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id'
 ```
 Encryption is done at time of assignment.
 
 To retrieve the decrypted data, call:
-```
+```ruby
   my_model_instance.my_attribute_d
 ```
 
@@ -17,7 +17,7 @@ Encrypted data is stored as a hash in your database in the attribute column. It 
 
 ##Additional Options
 You can add encryption contexts as strings, method calls, or procs. Default is none.
-```
+```ruby
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   context_key: 'my context key', context_value: 'my context value'
 
@@ -29,7 +29,7 @@ kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
 ```
 
 You can also toggle whether or not the model instance should retain decrypted values. Default is false. Change to true if you want to reduce the AWS API calls made for constant decryption. I cannot comment on the security implications enabling or disabling retaining.
-```
+```ruby
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   retain: true
 ```
