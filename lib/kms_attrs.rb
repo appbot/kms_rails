@@ -121,7 +121,7 @@ module KmsAttrs
     end
 
     def aws_kms
-      @kms ||= Aws::KMS::Client.new(region: ENV['AWS_DEFAULT_REGION'])
+      @kms ||= Aws::KMS::Client.new
     end
 
     def aws_generate_data_key(key_id, context_key, context_value)
