@@ -1,3 +1,5 @@
+require 'msgpack'
+
 module KmsAttrs
   class << self
     def included base
@@ -21,9 +23,9 @@ module KmsAttrs
         data = nil
         
         store_hash(field, {
-          key: data_key.ciphertext_blob,
-          iv: encrypted[:iv],
-          blob: encrypted[:data]
+          'key' => data_key.ciphertext_blob,
+          'iv' => encrypted[:iv],
+          'blob' => encrypted[:data]
         })
       end
 
@@ -38,9 +40,9 @@ module KmsAttrs
             plaintext
           else
             plaintext = decrypt_attr(
-              hash[:blob], 
-              aws_decrypt_key(hash[:key], context_key, context_value),
-              hash[:iv]
+              hash['blob'], 
+              aws_decrypt_key(hash['key'], context_key, context_value),
+              hash['iv']
             )
 
             if retain
@@ -64,17 +66,16 @@ module KmsAttrs
   module InstanceMethods
     def store_hash(field, data)
       @_hashes ||= {}
-      b_data = Marshal.dump(data)
-      data64 = Base64.encode64(b_data)
-      @_hashes[field] = data64
-      self[field] = data64
+      serialized_data = data.to_msgpack
+      @_hashes[field] = serialized_data
+      self[field] = serialized_data
     end
 
     def get_hash(field)
       @_hashes ||= {}
       hash = @_hashes[field] ||= read_attribute(field)
       if hash
-        Marshal.load(Base64.decode64(hash))
+        MessagePack.unpack(hash)
       else
         nil
       end

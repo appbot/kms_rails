@@ -12,5 +12,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'activerecord'
   s.add_runtime_dependency 'aws-sdk-resources', '~> 2'
+  s.add_runtime_dependency 'msgpack'
   s.add_development_dependency 'rspec'
 end
