@@ -1,16 +1,16 @@
-#kms_attrs
+#kms_attrs2
 
-kms_attrs is a gem for easily adding Amazon Web Services KMS encryption to your ActiveRecord model attributes. It uses the GenerateDataKey method to perform "envelope" encryption locally with an OpenSSL AES-256-CBC cipher.
+kms_attrs2 (based on [kms_attrs](https://github.com/justinoue/kms_attrs)) is a gem for easily adding Amazon Web Services KMS encryption to your ActiveRecord model attributes. It uses the GenerateDataKey method to perform "envelope" encryption locally with an OpenSSL AES-256-CBC cipher.
 
 To use, simply put the following code in your models for the fields you want to encrypt:
 ```ruby
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id'
 ```
-Encryption is done at time of assignment.
+Encryption is done at time of assignment and is stored in the real database field 'my_attribute_enc'.
 
 To retrieve the decrypted data, call:
 ```ruby
-  my_model_instance.my_attribute_d
+  my_model_instance.my_attribute
 ```
 
 Encrypted data is stored as a [MessagePack](https://github.com/msgpack/msgpack-ruby) blob in your database in the `#{my_attribute}_enc` column. It should be a binary column of sufficient size to store the encrypted data + metadata (suggested 65535).
@@ -53,7 +53,7 @@ or by using the documented AWS environmental variables.
 
 
 ###Notes
-This gem has been developed against Ruby 2.1.5, Rails 4.2, and AWS SDK v2. Credit where credit is due, I used strongbox by spikex as an inspiration and guide when creating this. https://github.com/spikex/strongbox
+This gem has been developed against Ruby 2.3.1, Rails 4.2, and AWS SDK v2. Credit where credit is due, I used strongbox by spikex as an inspiration and guide when creating this. https://github.com/spikex/strongbox
 
 ###Disclaimer
 I make no claims about enhanced security when using this gem.

@@ -1,6 +1,6 @@
 require 'msgpack'
 
-module KmsAttrs
+module KmsAttrs2
   class << self
     def included base
       base.extend ClassMethods
@@ -175,5 +175,5 @@ module KmsAttrs
 end
 
 if Object.const_defined?('ActiveRecord')
-  ActiveRecord::Base.send(:include, KmsAttrs)
+  ActiveRecord::Base.send(:include, KmsAttrs2)
 end
