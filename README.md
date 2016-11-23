@@ -44,7 +44,13 @@ This will attempt mutate the stored string to contain just null bytes, and then 
 ##Aws Configuration
 This gem expects some standard Aws SDK configuration and some not so standard. The Aws client is initiated with no credentials. This should then load credentials either from ENV['AWS_ACCESS_KEY_ID'] and ENV['AWS_SECRET_ACCESS_KEY'] or an IAM role on an EC2 instance.
 
-The not so standard configuration is specifiying ENV['AWS_DEFAULT_REGION'] for the AWS region you are using KMS in. KMS key IDs and operations are region specific. This will be moved to an overrideable initialization parameter. I forgot.
+You can configure your region in a Rails initializer with;
+```ruby
+Aws.config[:region] = 'us-east-1'
+```
+
+or by using the documented AWS environmental variables.
+
 
 ###Notes
 This gem has been developed against Ruby 2.1.5, Rails 4.2, and AWS SDK v2. Credit where credit is due, I used strongbox by spikex as an inspiration and guide when creating this. https://github.com/spikex/strongbox
