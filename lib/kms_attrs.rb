@@ -10,6 +10,10 @@ module KmsAttrs
   module ClassMethods
     def kms_attr(field, key_id:, retain: false, context_key: nil, context_value: nil)
       include InstanceMethods
+
+      real_field = "#{field}_enc"
+      raise RuntimeError, "Field '#{real_field}' must exist to store encrypted data" unless self.column_names.include?(real_field)
+      raise RuntimeError, "Field '#{field}' must not be a real column, '#{real_field}' is the real column" if self.column_names.include?(field)
       
       define_method "#{field}=" do |data|
         key_id = set_key_id(key_id)
@@ -18,7 +22,7 @@ module KmsAttrs
         data_key.plaintext = nil
 
         if retain
-          set_retained(field, data)  
+          set_retained(field, data)
         end
         data = nil
         
@@ -29,11 +33,11 @@ module KmsAttrs
         })
       end
 
-      define_method "#{field}" do
+      define_method "#{real_field}" do
         get_hash(field)
       end
 
-      define_method "#{field}_d" do
+      define_method "#{field}" do
         hash = get_hash(field)
         if hash
           if retain && plaintext = get_retained(field)
@@ -68,12 +72,12 @@ module KmsAttrs
       @_hashes ||= {}
       serialized_data = data.to_msgpack
       @_hashes[field] = serialized_data
-      self[field] = serialized_data
+      self[:"#{field}_enc"] = serialized_data
     end
 
     def get_hash(field)
       @_hashes ||= {}
-      hash = @_hashes[field] ||= read_attribute(field)
+      hash = @_hashes[field] ||= read_attribute(:"#{field}_enc")
       if hash
         MessagePack.unpack(hash)
       else

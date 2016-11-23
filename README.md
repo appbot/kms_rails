@@ -13,7 +13,7 @@ To retrieve the decrypted data, call:
   my_model_instance.my_attribute_d
 ```
 
-Encrypted data is stored as a [MessagePack](https://github.com/msgpack/msgpack-ruby) blob in your database in the attribute column. It should be a binary column of sufficient size to store the encrypted data + metadata (suggested 65535).
+Encrypted data is stored as a [MessagePack](https://github.com/msgpack/msgpack-ruby) blob in your database in the `#{my_attribute}_enc` column. It should be a binary column of sufficient size to store the encrypted data + metadata (suggested 65535).
 
 ##Additional Options
 You can add encryption contexts as strings, method calls, or procs. Default is none.
