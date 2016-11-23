@@ -13,7 +13,7 @@ To retrieve the decrypted data, call:
   my_model_instance.my_attribute_d
 ```
 
-Encrypted data is stored as a hash in your database in the attribute column. It should be a text column as string may not be long enough.
+Encrypted data is stored as a [MessagePack](https://github.com/msgpack/msgpack-ruby) blob in your database in the attribute column. It should be a binary column of sufficient size to store the encrypted data + metadata (suggested 65535).
 
 ##Additional Options
 You can add encryption contexts as strings, method calls, or procs. Default is none.
@@ -33,6 +33,13 @@ You can also toggle whether or not the model instance should retain decrypted va
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   retain: true
 ```
+
+To clear a retained decrypted value, call:
+```ruby
+  my_model_instance.my_attribute_clear
+```
+
+This will attempt mutate the stored string to contain just null bytes, and then dereference it to be garbage collected. No guarantees are provided about additional copies of the retained data being cached elsewhere.
 
 ##Aws Configuration
 This gem expects some standard Aws SDK configuration and some not so standard. The Aws client is initiated with no credentials. This should then load credentials either from ENV['AWS_ACCESS_KEY_ID'] and ENV['AWS_SECRET_ACCESS_KEY'] or an IAM role on an EC2 instance.
