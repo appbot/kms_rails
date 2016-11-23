@@ -54,6 +54,10 @@ module KmsAttrs
         end
       end
 
+      define_method "#{field}_clear" do
+        clear_retained(field)
+      end
+
     end
   end
 
@@ -84,6 +88,13 @@ module KmsAttrs
     def set_retained(field, plaintext)
       @_retained ||= {}
       @_retained[field] = plaintext
+    end
+
+    def clear_retained(field)
+      return unless @_retained.include? field
+      @_retained[field].force_encoding('BINARY')
+      @_retained[field].tr!("\0-\xff".b, "\0".b)
+      @_retained[field] = nil
     end
 
     def decrypt_attr(data, key, iv)
