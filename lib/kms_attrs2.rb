@@ -116,7 +116,7 @@ module KmsAttrs2
 
       cipher.key = key
       iv = cipher.random_iv
-      {iv: iv, data: cipher.update(data) + cipher.final}
+      {iv: iv, data: cipher.update(data.to_s) + cipher.final}
     end
 
     def aws_decrypt_key(key, context_key, context_value)
