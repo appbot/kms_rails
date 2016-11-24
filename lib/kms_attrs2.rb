@@ -72,12 +72,12 @@ module KmsAttrs2
       @_hashes ||= {}
       serialized_data = data.to_msgpack
       @_hashes[field] = serialized_data
-      self[:"#{field}_enc"] = serialized_data
+      self["#{field}_enc"] = serialized_data
     end
 
     def get_hash(field)
       @_hashes ||= {}
-      hash = @_hashes[field] ||= read_attribute(:"#{field}_enc")
+      hash = @_hashes[field] ||= read_attribute("#{field}_enc")
       if hash
         MessagePack.unpack(hash)
       else
