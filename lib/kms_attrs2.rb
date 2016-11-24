@@ -16,6 +16,13 @@ module KmsAttrs2
       raise RuntimeError, "Field '#{field}' must not be a real column, '#{real_field}' is the real column" if self.column_names.include?(field)
       
       define_method "#{field}=" do |data|
+        if data.nil? # Just set to nil if nil
+          clear_retained(field)
+          @_hashes[field] = nil
+          self[real_field] = nil
+          return 
+        end
+
         key_id = set_key_id(key_id)
         data_key = aws_generate_data_key(key_id, context_key, context_value)
         encrypted = encrypt_attr(data, data_key.plaintext)
