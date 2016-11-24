@@ -92,6 +92,13 @@ module KmsAttrs2
 
     def set_retained(field, plaintext)
       @_retained ||= {}
+
+      if @_retained[field]
+        @_retained[field].force_encoding('BINARY')
+        @_retained[field].tr!("\0-\xff".b, "\0".b)
+        @_retained[field] = nil
+      end
+
       @_retained[field] = plaintext
     end
 
