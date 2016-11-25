@@ -74,6 +74,14 @@ Aws.config[:region] = 'us-east-1'
 
 or by using the documented AWS environmental variables.
 
+## Test Mode
+
+A basic fake implementation of `Aws::KMS::Client` has been written, allowing kms_rails functionality to be used in test environments without making any web requests. The fake implementation emulates the functionality of the two API calls kms_rails issues to AWS and performs fake encryption (the key is 'encrypted' by reversing it). At this time, the fake implementation does not support contexts.
+
+You can enable it in your Rails config (probably `config/environments/test.rb`) with the following
+```ruby
+config.x.kms_rails.fake_kms_api = true
+```
 
 ###Notes
 This gem has been developed against Ruby 2.3.1, Rails 4.2, and AWS SDK v2. Credit where credit is due, I used strongbox by spikex as an inspiration and guide when creating this. https://github.com/spikex/strongbox
