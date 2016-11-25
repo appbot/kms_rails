@@ -1,43 +1,5 @@
 require 'msgpack'
 
-module KmsAttrs2Mock
-  class << self
-    def included base
-      base.extend ClassMethods
-    end
-  end
-
-  module ClassMethods
-    def kms_attr(field, key_id:, retain: false, context_key: nil, context_value: nil)
-
-      real_field = "#{field}_enc"
-
-      define_method "#{field}=" do |data|
-        self[real_field] = data.nil? ? nil : {
-          'key' => '0' * 32,
-          'iv' => '0' * 16,
-          'blob' => data.to_s.reverse,
-        }.to_msgpack
-      end
-
-      define_method "#{real_field}" do
-        hash = self[real_field]
-        hash ? MessagePack.unpack(hash) : nil
-      end
-
-      define_method "#{field}" do
-        hash = self[real_field]
-        hash ? MessagePack.unpack(hash)['blob'].reverse : nil
-      end
-
-      define_method "#{field}_clear" do
-        nil
-      end
-
-    end
-  end
-end
-
 module KmsAttrs2
   class << self
     def included base
@@ -177,7 +139,12 @@ module KmsAttrs2
     end
 
     def aws_kms
-      @kms ||= Aws::KMS::Client.new
+      if Rails.env.test?
+        require 'kms_mock'
+        @kms ||= Aws::KMSMocked::Client.new
+      else
+        @kms ||= Aws::KMS::Client.new
+      end
     end
 
     def aws_generate_data_key(key_id, context_key, context_value)
@@ -227,9 +194,5 @@ module KmsAttrs2
 end
 
 if Object.const_defined?('ActiveRecord')
-  if Rails.env.test?
-    ActiveRecord::Base.send(:include, KmsAttrs2Mock)
-  else
-    ActiveRecord::Base.send(:include, KmsAttrs2)
-  end
+  ActiveRecord::Base.send(:include, KmsAttrs2)
 end
