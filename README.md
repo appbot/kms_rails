@@ -45,10 +45,10 @@ class TestJob < ActiveJob::Base
     # Do things
   end
 end
+```
 
 Note: You can only declare kms_arg/kms_args once. Use kms_args if you want to encrypt multiple arguments. Seperate keys per argument are not implemented at this time.
 
-```
 Encryption is done when the job is seralized into the data store and is stored as a JSON hash of the necessary encyption information.
 
 The encryption is automatically reversed when the job is deserialized.
