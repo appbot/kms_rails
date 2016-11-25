@@ -1,1 +1,1 @@
-require 'kms_attrs2'
+require 'kms_rails'

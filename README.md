@@ -1,8 +1,10 @@
-#kms_attrs2
+#kms_rails
 
-kms_attrs2 (based on [kms_attrs](https://github.com/justinoue/kms_attrs)) is a gem for easily adding Amazon Web Services KMS encryption to your ActiveRecord model attributes. It uses the GenerateDataKey method to perform "envelope" encryption locally with an OpenSSL AES-256-CBC cipher.
+kms_rails (based on [kms_attrs](https://github.com/justinoue/kms_attrs)) is a gem for easily adding Amazon Web Services KMS encryption to your ActiveRecord model attributes and ActiveJob arguments. It uses the GenerateDataKey method to perform "envelope" encryption locally with an OpenSSL AES-256-CBC cipher.
 
-To use, simply put the following code in your models for the fields you want to encrypt:
+## ActiveRecord
+
+To use on ActiveRecord, simply put the following code in your models for the fields you want to encrypt:
 ```ruby
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id'
 ```
@@ -14,19 +16,6 @@ To retrieve the decrypted data, call:
 ```
 
 Encrypted data is stored as a [MessagePack](https://github.com/msgpack/msgpack-ruby) blob in your database in the `#{my_attribute}_enc` column. It should be a binary column of sufficient size to store the encrypted data + metadata (suggested 65535).
-
-##Additional Options
-You can add encryption contexts as strings, method calls, or procs. Default is none.
-```ruby
-kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
-  context_key: 'my context key', context_value: 'my context value'
-
-kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
-  context_key: :model_method_context_key, context_value: :model_method_context_value
-
-kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
-  context_key: Proc.new { }, context_value: Proc.new { }
-```
 
 You can also toggle whether or not the model instance should retain decrypted values. Default is false. Change to true if you want to reduce the AWS API calls made for constant decryption. I cannot comment on the security implications enabling or disabling retaining.
 ```ruby
@@ -41,8 +30,42 @@ To clear a retained decrypted value, call:
 
 This will attempt mutate the stored string to contain just null bytes, and then dereference it to be garbage collected. No guarantees are provided about additional copies of the retained data being cached elsewhere.
 
+## ActiveJob
+
+To use on ActiveJob, simply put the following code in your job for the arguments you wish to encrypt in flight.
+```ruby
+kms_arg 0, key_id: 'my-aws-kms-key-id'
+kms_args [0, 1], key_id: 'my-aws-kms-key-id'
+
+# The below sample will ensure param1 is encrypted before entering the job store
+class TestJob < ActiveJob::Base
+  kms_arg 0, key_id: 'my-aws-kms-key-id'
+
+  def perform(param1, param2)
+    # Do things
+  end
+end
+
+```
+Encryption is done when the job is seralized into the data store and is stored as a JSON hash of the necessary encyption information.
+
+The encryption is automatically reversed when the job is deserialized.
+
+##Additional Options
+You can add encryption contexts as strings, method calls, or procs to kms_attr and kms_arg/args. Default is none.
+```ruby
+kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
+  context_key: 'my context key', context_value: 'my context value'
+
+kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
+  context_key: :model_method_context_key, context_value: :model_method_context_value
+
+kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
+  context_key: Proc.new { }, context_value: Proc.new { }
+```
+
 ##Aws Configuration
-This gem expects some standard Aws SDK configuration and some not so standard. The Aws client is initiated with no credentials. This should then load credentials either from ENV['AWS_ACCESS_KEY_ID'] and ENV['AWS_SECRET_ACCESS_KEY'] or an IAM role on an EC2 instance.
+This gem expects some standard Aws SDK configuration. The Aws client is initiated with no credentials. This should then load credentials either from ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'], `Aws` object, or an IAM role on an EC2 instance.
 
 You can configure your region in a Rails initializer with;
 ```ruby
