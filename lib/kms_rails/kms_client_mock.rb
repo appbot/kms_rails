@@ -14,7 +14,7 @@ module KmsRails
           ciphertext_blob = plaintext.reverse
           @@blob_to_key[ciphertext_blob] = key_id
 
-          Aws::KMS::Types::GenerateDataKeyResponse.new(
+          ::Aws::KMS::Types::GenerateDataKeyResponse.new(
             key_id: key_id,
             plaintext: plaintext,
             ciphertext_blob: ciphertext_blob,
@@ -22,10 +22,10 @@ module KmsRails
         end
 
         def decrypt(ciphertext_blob:, encryption_context: nil)
-          raise Aws::KMS::Errors::InvalidCiphertextException.new(nil, nil) unless @@blob_to_key.include?(ciphertext_blob)
+          raise ::Aws::KMS::Errors::InvalidCiphertextException.new(nil, nil) unless @@blob_to_key.include?(ciphertext_blob)
           raise NotImplementedError, 'Encryption context not current supported in test mode' unless encryption_context.nil?
 
-          Aws::KMS::Types::DecryptResponse.new(
+          ::Aws::KMS::Types::DecryptResponse.new(
             key_id: @@blob_to_key[ciphertext_blob],
             plaintext: ciphertext_blob.reverse,
           )
