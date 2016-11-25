@@ -109,7 +109,7 @@ module KmsRails
     end
 
     def aws_kms
-      require './kms_client_mock' if Rails.configuration.x.kms_attrs2.mock_kms_api == true
+      require './kms_client_mock' if Rails.configuration.x.kms_rails.mock_kms_api == true
       @kms ||= Aws::KMS::Client.new
     end
 
