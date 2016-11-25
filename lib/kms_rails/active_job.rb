@@ -17,19 +17,23 @@ module KmsRails
         enc = Core.new(key_id: key_id, context_key: context_key, context_value: context_value)
 
         define_method 'serialize_arguments' do |args|
+          args = args.dup
+
           field_numbers.each do |i|
-            args[i] = enc.encrypt64(args[i])
+            args[i] = enc.encrypt64(args[i]) unless args[i].nil?
           end
 
           super(args)
         end
 
         define_method 'deserialize_arguments' do |args|
+          args = super(args).dup
+
           field_numbers.each do |i|
-            args[i] = enc.decrypt64(args[i])
+            args[i] = enc.decrypt64(args[i]) unless args[i].nil?
           end
 
-          super(args)
+          args
         end
       end
     end
