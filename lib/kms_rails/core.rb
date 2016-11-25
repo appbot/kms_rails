@@ -11,6 +11,8 @@ module KmsRails
     end
 
     def encrypt(data)
+      return nil if data.nil?
+
       data_key = aws_generate_data_key(@key_id)
       encrypted = encrypt_attr(data, data_key.plaintext)
 
