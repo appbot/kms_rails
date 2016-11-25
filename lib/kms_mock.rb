@@ -1,9 +1,7 @@
 module Aws
   module KMSMocked
     class Client
-      def initialize
-        @@blob_to_key = {}
-      end
+      @@blob_to_key = {}
 
       def generate_data_key(key_id:, key_spec:, encryption_context: nil)
         raise RuntimeError, 'Unsupported key_spec in test mode' unless key_spec == 'AES_256'
