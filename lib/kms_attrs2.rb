@@ -18,7 +18,6 @@ module KmsAttrs2
       define_method "#{field}=" do |data|
         if data.nil? # Just set to nil if nil
           clear_retained(field)
-          @_hashes[field] = nil
           self[real_field] = nil
           return 
         end
@@ -76,20 +75,12 @@ module KmsAttrs2
 
   module InstanceMethods
     def store_hash(field, data)
-      @_hashes ||= {}
-      serialized_data = data.to_msgpack
-      @_hashes[field] = serialized_data
-      self["#{field}_enc"] = serialized_data
+      self["#{field}_enc"] = data.to_msgpack
     end
 
     def get_hash(field)
-      @_hashes ||= {}
-      hash = @_hashes[field] ||= read_attribute("#{field}_enc")
-      if hash
-        MessagePack.unpack(hash)
-      else
-        nil
-      end
+      hash = read_attribute("#{field}_enc")
+      hash ? MessagePack.unpack(hash) : nil
     end
 
     def get_retained(field)
