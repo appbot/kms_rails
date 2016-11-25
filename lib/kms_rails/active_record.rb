@@ -29,7 +29,6 @@ module KmsRails
           encrypted_data = enc.encrypt(data)
 
           set_retained(field, data) if retain
-          Core.shred_string(data)
           data = nil
           
           store_hash(field, encrypted_data)
