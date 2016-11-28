@@ -2,13 +2,13 @@ PATH
   remote: .
   specs:
     kms_rails (0.0.1)
-      activejob
-      activerecord
+      activejob (~> 4)
+      activerecord (~> 4)
       aws-sdk (~> 2)
       msgpack
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     activejob (4.2.7.1)
       activesupport (= 4.2.7.1)
@@ -27,14 +27,18 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     arel (6.0.3)
-    aws-sdk (2.2.34)
-      aws-sdk-resources (= 2.2.34)
-    aws-sdk-core (2.2.34)
+    aws-sdk (2.6.28)
+      aws-sdk-resources (= 2.6.28)
+    aws-sdk-core (2.6.28)
+      aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.2.34)
-      aws-sdk-core (= 2.2.34)
+    aws-sdk-resources (2.6.28)
+      aws-sdk-core (= 2.6.28)
+    aws-sigv4 (1.0.0)
     builder (3.2.2)
     byebug (9.0.6)
+    codeclimate-test-reporter (1.0.3)
+      simplecov
     database_cleaner (1.5.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
@@ -75,6 +79,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  codeclimate-test-reporter
   database_cleaner
   kms_rails!
   rspec

@@ -10,13 +10,14 @@ Gem::Specification.new do |s|
   s.license = 'GPLv3'
   s.require_paths = ['lib']
 
-  s.add_runtime_dependency 'activerecord'
-  s.add_runtime_dependency 'activejob'
+  s.add_runtime_dependency 'activerecord', '~> 4'
+  s.add_runtime_dependency 'activejob', '~> 4'
   s.add_runtime_dependency 'aws-sdk', '~> 2'
   s.add_runtime_dependency 'msgpack'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rspec-mocks'
   s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'codeclimate-test-reporter'
   s.add_development_dependency 'with_model'
   s.add_development_dependency 'byebug'
   s.add_development_dependency 'sqlite3'
