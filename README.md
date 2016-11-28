@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/appbot/kms_rails.svg)](https://travis-ci.org/appbot/kms_rails)
+[![Code Climate](https://codeclimate.com/github/appbot/kms_rails/badges/gpa.svg)](https://codeclimate.com/github/appbot/kms_rails)
+
 #kms_rails
 
 kms_rails (based on [kms_attrs](https://github.com/justinoue/kms_attrs)) is a gem for easily adding Amazon Web Services KMS encryption to your ActiveRecord model attributes and ActiveJob arguments. It uses the GenerateDataKey method to perform "envelope" encryption locally with an OpenSSL AES-256-CBC cipher.
