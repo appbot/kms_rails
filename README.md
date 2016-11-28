@@ -9,11 +9,19 @@ It improves upon kms_attrs by adding support for ActiveJob argument encryption, 
 
 ## Getting started
 
-At the moment there isn't a gem release, but if you want to include the current master branch in your project you can do so with the following Gemfile entry;
+Add this line to your application's Gemfile:
 
 ```ruby
-gem 'kms_rails', github: 'appbot/kms_rails'
+gem 'kms_rails'
 ```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install kms_rails
 
 ## ActiveRecord
 
@@ -30,7 +38,7 @@ To retrieve the decrypted data, call:
 
 Encrypted data is stored as a [MessagePack](https://github.com/msgpack/msgpack-ruby) blob in your database in the `#{my_attribute}_enc` column. It should be a binary column of sufficient size to store the encrypted data + metadata (suggested 65535).
 
-You can also toggle whether or not the model instance should retain decrypted values. Default is false. Change to true if you want to reduce the AWS API calls made for constant decryption. I cannot comment on the security implications enabling or disabling retaining.
+You can also toggle whether or not the model instance should retain decrypted values. Default is false. Change to true if you want to reduce the AWS API calls made for constant decryption. The security implications of enabling or disabling retaining are not commented upon.
 ```ruby
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   retain: true
@@ -100,12 +108,24 @@ KmsRails.configure do |config|
 end
 ```
 
-###Notes
-This gem has been developed against Ruby 2.3.1, Rails 4.2, and AWS SDK v2. Credit where credit is due, I used strongbox by spikex as an inspiration and guide when creating this. https://github.com/spikex/strongbox
+## Other stuff
 
-###Disclaimer
-I make no claims about enhanced security when using this gem.
+### Notes
+This gem has been developed against Ruby 2.3.1, Rails 4.2, and AWS SDK v2. Credit where credit is due, strongbox by spikex was used as an inspiration and guide when creating this. https://github.com/spikex/strongbox
 
-###Read more about AWS KMS
+### Disclaimer
+No claims are made about enhanced security when using this gem.
+
+### Read more about AWS KMS
 * http://aws.amazon.com/kms/
 * http://docs.aws.amazon.com/sdkforruby/api/Aws/KMS/Client.html
+
+### Development
+
+After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+### Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/appbot/kms_rails.
