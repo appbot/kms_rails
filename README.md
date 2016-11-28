@@ -4,6 +4,14 @@ kms_rails (based on [kms_attrs](https://github.com/justinoue/kms_attrs)) is a ge
 
 It improves upon kms_attrs by adding support for ActiveJob argument encryption, moving to a more efficient serialization model and introducing a fairly comprehensive test suite.
 
+## Getting started
+
+At the moment there isn't a gem release, but if you want to include the current master branch in your project you can do so with the following Gemfile entry;
+
+```ruby
+gem 'kms_rails', github: 'appbot/kms_rails'
+```
+
 ## ActiveRecord
 
 To use on ActiveRecord, simply put the following code in your models for the fields you want to encrypt:
