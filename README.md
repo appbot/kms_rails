@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/appbot/kms_rails.svg)](https://travis-ci.org/appbot/kms_rails)
-[![Code Climate](https://codeclimate.com/github/appbot/kms_rails/badges/gpa.svg)](https://codeclimate.com/github/appbot/kms_rails)
+[![Code Climate](https://codeclimate.com/github/appbot/kms_rails/badges/gpa.svg)](https://codeclimate.com/github/appbot/kms_rails) [![Test Coverage](https://codeclimate.com/github/appbot/kms_rails/badges/coverage.svg)](https://codeclimate.com/github/appbot/kms_rails/coverage)
 
 #kms_rails
 
