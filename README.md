@@ -2,6 +2,8 @@
 
 kms_rails (based on [kms_attrs](https://github.com/justinoue/kms_attrs)) is a gem for easily adding Amazon Web Services KMS encryption to your ActiveRecord model attributes and ActiveJob arguments. It uses the GenerateDataKey method to perform "envelope" encryption locally with an OpenSSL AES-256-CBC cipher.
 
+It improves upon kms_attrs by adding support for ActiveJob argument encryption, moving to a more efficient serialization model and introducing a fairly comprehensive test suite.
+
 ## ActiveRecord
 
 To use on ActiveRecord, simply put the following code in your models for the fields you want to encrypt:
