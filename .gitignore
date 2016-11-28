@@ -1,0 +1,4 @@
+coverage
+.byebug_history
+kms_rails.sqlite3*
+examples.txt

@@ -80,9 +80,11 @@ or by using the documented AWS environmental variables.
 
 A basic fake implementation of `Aws::KMS::Client` has been written, allowing kms_rails functionality to be used in test environments without making any web requests. The fake implementation emulates the functionality of the two API calls kms_rails issues to AWS and performs fake encryption (the key is 'encrypted' by reversing it). At this time, the fake implementation does not support contexts.
 
-You can enable it in your Rails config (probably `config/environments/test.rb`) with the following
+You can enable it in your Rails initializers with the following
 ```ruby
-config.x.kms_rails.fake_kms_api = true
+KmsRails.configure do |config|
+  config.fake_kms_api = true
+end
 ```
 
 ###Notes
@@ -90,12 +92,6 @@ This gem has been developed against Ruby 2.3.1, Rails 4.2, and AWS SDK v2. Credi
 
 ###Disclaimer
 I make no claims about enhanced security when using this gem.
-
-###To Do
-* Tests
-* Choose your own encryption method
-* Choose your own KMS key type
-* Specify AWS region in configuration
 
 ###Read more about AWS KMS
 * http://aws.amazon.com/kms/

@@ -1,6 +1,7 @@
 require 'base64'
 require 'openssl'
 require 'aws-sdk'
+require 'kms_rails/configuration'
 
 module KmsRails
   class Core
@@ -111,7 +112,7 @@ module KmsRails
     end
 
     def aws_kms
-      require 'kms_rails/kms_client_mock' if Rails.configuration.x.kms_rails.fake_kms_api == true
+      require 'kms_rails/kms_client_mock' if KmsRails.configuration.fake_kms_api == true
       @kms ||= Aws::KMS::Client.new
     end
 

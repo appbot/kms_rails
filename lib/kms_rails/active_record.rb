@@ -85,7 +85,8 @@ module KmsRails
       end
 
       def clear_retained(field)
-        return unless @_retained.include? field && !@_retained[field].nil?
+        @_retained ||= {}
+        return if !@_retained.include?(field) || @_retained[field].nil?
         Core.shred_string(@_retained[field])
         @_retained[field] = nil
       end

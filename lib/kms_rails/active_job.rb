@@ -1,3 +1,4 @@
+require 'active_job'
 require 'kms_rails/core'
 
 module KmsRails
