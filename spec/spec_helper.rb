@@ -37,6 +37,7 @@ SimpleCov.start
 
 # Set up codebase
 require 'kms_rails'
+require 'kms_rails/kms_client_mock'
 KmsRails.configure do |config|
   config.fake_kms_api = true
 end
