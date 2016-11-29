@@ -81,7 +81,7 @@ module KmsRails
           @_retained[field] = nil
         end
 
-        @_retained[field] = plaintext
+        @_retained[field] = plaintext.dup
       end
 
       def clear_retained(field)
