@@ -38,5 +38,12 @@ describe KmsRails::Core do
         expect(subject.key_id).to eq('alias/the-proc-value')
       end
     end
+
+    context 'symbol' do
+      let(:key_id) { :test }
+      it 'raises exception' do
+        expect { subject.key_id }.to raise_error
+      end
+    end
   end
 end
