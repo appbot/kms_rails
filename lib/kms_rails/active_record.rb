@@ -42,7 +42,7 @@ module KmsRails
           hash = get_hash(field)
           return nil unless hash
 
-          if retain && plaintext = get_retained(field)
+          if retain && (plaintext = get_retained(field))
             plaintext
           else
             plaintext = enc.decrypt(hash)
