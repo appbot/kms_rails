@@ -5,8 +5,10 @@ require 'kms_rails/configuration'
 
 module KmsRails
   class Core
+    attr_reader :context_key, :context_value
+
     def initialize(key_id:, context_key: nil, context_value: nil)
-      @key_id = set_key_id(key_id)
+      @base_key_id = key_id
       @context_key = context_key
       @context_value = context_value
     end
@@ -14,7 +16,7 @@ module KmsRails
     def encrypt(data)
       return nil if data.nil?
 
-      data_key = aws_generate_data_key(@key_id)
+      data_key = aws_generate_data_key(key_id)
       encrypted = encrypt_attr(data, data_key.plaintext)
 
       self.class.shred_string(data_key.plaintext)
@@ -43,6 +45,21 @@ module KmsRails
       decrypt( data_obj.map { |k,v| [k, Base64.strict_decode64(v)] }.to_h )
     end
 
+    def key_id
+      case @base_key_id
+      when Proc
+        @base_key_id.call
+      when String
+        if @base_key_id =~ /\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\z/ || @base_key_id.start_with?('alias/') # if UUID or direct alias
+          @base_key_id 
+        else
+          'alias/' + KmsRails.configuration.alias_prefix + @base_key_id
+        end
+      else
+        raise RuntimeError, 'Only Proc and String arguments are supported'
+      end
+    end
+
     def self.shred_string(str)
       str.force_encoding('BINARY')
       str.tr!("\0-\xff".b, "\0".b)
@@ -60,33 +77,11 @@ module KmsRails
           value = value.call
         end
 
-        if key.is_a?(Symbol)
-          key = self.send(key)
-        end
-
-        if value.is_a?(Symbol)
-          value = self.send(value)
-        end
-
         if key.is_a?(String) && value.is_a?(String)
           args[:encryption_context] = {key => value}
         end
       end
       args
-    end
-
-    def set_key_id(key_id)
-      if key_id.is_a?(Proc)
-        key_id = key_id.call
-      end
-
-      if key_id.is_a?(Symbol)
-        key_id = self.send(key_id)
-      end
-
-      if key_id.is_a?(String)
-        return key_id
-      end
     end
 
     def decrypt_attr(data, key, iv)

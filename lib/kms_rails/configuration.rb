@@ -8,11 +8,16 @@ module KmsRails
     yield(configuration)
   end
 
+  def self.reset_config
+    self.configuration = Configuration.new
+  end
+
   class Configuration
-    attr_accessor :fake_kms_api
+    attr_accessor :fake_kms_api, :alias_prefix
 
     def initialize
       @fake_kms_api = false
+      @alias_prefix = ''
     end
   end
 end

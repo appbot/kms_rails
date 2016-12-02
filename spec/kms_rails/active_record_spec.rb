@@ -130,7 +130,7 @@ describe KmsRails::ActiveRecord do
       it 'calls KMS' do
         expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
           .once
-          .with(hash_including(key_id: 'a', key_spec: 'AES_256'))
+          .with(hash_including(key_id: 'alias/a', key_spec: 'AES_256'))
           .and_call_original
 
         subject.the_secret = 'foo'

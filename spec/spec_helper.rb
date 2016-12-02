@@ -141,4 +141,9 @@ RSpec.configure do |config|
   #     example.run
   #   end
   # end
+
+  # Ensure configuration is reset after each test
+  config.after(:each) do
+    KmsRails.reset_config
+  end
 end

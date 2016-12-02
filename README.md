@@ -75,13 +75,10 @@ Encryption is done when the job is seralized into the data store and is stored a
 The encryption is automatically reversed when the job is deserialized.
 
 ##Additional Options
-You can add encryption contexts as strings, method calls, or procs to kms_attr and kms_arg/args. Default is none.
+You can add encryption contexts as strings or procs to kms_attr and kms_arg/args. Default is none.
 ```ruby
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   context_key: 'my context key', context_value: 'my context value'
-
-kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
-  context_key: :model_method_context_key, context_value: :model_method_context_value
 
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   context_key: Proc.new { }, context_value: Proc.new { }
@@ -107,6 +104,22 @@ KmsRails.configure do |config|
   config.fake_kms_api = true
 end
 ```
+
+## Alias prefixes
+
+You can use the `alias_prefix` configuration option to automatically add a prefix to the key_ids that you specify. For example;
+
+```ruby
+KmsRails.configure do |config|
+  config.alias_prefix = Rails.env + '/'
+end
+
+kms_attr :my_attribute, key_id: 'my-key-alias'
+```
+
+Will resolve 'my-key-alias' to 'alias/production/my-key-alias' in the production environment, and 'alias/staging/my-key-alias' in staging.
+
+Directly specifying a key_id as a UUID or with the `alias/` prefix explicitly declared will prevent this behaviour from occurring.
 
 ## Other stuff
 

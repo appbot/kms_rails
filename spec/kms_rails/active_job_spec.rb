@@ -8,7 +8,7 @@ describe KmsRails::ActiveJob do
       it 'calls the encryption routine once' do
         expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
           .once
-          .with(hash_including(key_id: 'q', key_spec: 'AES_256'))
+          .with(hash_including(key_id: 'alias/q', key_spec: 'AES_256'))
           .and_call_original
 
         subject.new('foo', 'bar', 'baz').serialize
@@ -30,7 +30,7 @@ describe KmsRails::ActiveJob do
       it 'calls the encryption routine twice' do
         expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
           .twice
-          .with(hash_including(key_id: 'r', key_spec: 'AES_256'))
+          .with(hash_including(key_id: 'alias/r', key_spec: 'AES_256'))
           .and_call_original
 
         subject.new('foo', 'bar', 'baz').serialize
