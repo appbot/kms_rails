@@ -162,6 +162,11 @@ describe KmsRails::ActiveRecord do
         subject['the_secret_enc'] = encoded
         expect(subject.the_secret_enc).to eq(decoded)
       end
+
+      it 'returns nil if field is nil' do
+        subject['the_secret_enc'] = nil
+        expect(subject.the_secret_enc).to eq(nil)
+      end
     end
 
     context 'retain' do
