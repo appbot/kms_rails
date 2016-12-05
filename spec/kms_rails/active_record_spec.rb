@@ -155,7 +155,7 @@ describe KmsRails::ActiveRecord do
     end
 
     context '#the_secret_enc' do
-      let(:decoded) { {'key' => 'baz', 'iv' => 'foo', 'blob' => 'bar'} }
+      let(:decoded) { {'key' => 'YmF6', 'iv' => 'Zm9v', 'blob' => 'YmFy'} } # Base64 encoded values
       let(:encoded) { "\x83\xA3key\xA3baz\xA2iv\xA3foo\xA4blob\xA3bar".b }
 
       it 'decodes the messagepack format' do

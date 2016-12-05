@@ -35,7 +35,7 @@ module KmsRails
         end
 
         define_method "#{real_field}" do
-          get_hash(field)
+          Core.to64( get_hash(field) )
         end
 
         define_method "#{field}" do
