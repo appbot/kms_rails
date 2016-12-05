@@ -76,7 +76,7 @@ The encryption is automatically reversed when the job is deserialized.
 
 ### Already encrypted parameters
 
-You also have the option of passing the value from your ActiveRecord encrypted field directly into the ActiveJob. If you do this, the value will not be encrypted twice.
+You also have the option of passing the value from your ActiveRecord encrypted field directly into the ActiveJob. If you do this, the value will not be encrypted twice. However, if you do this, you must ensure that the encryption key ID is the same for both the ActiveRecord attribute and ActiveJob parameter.
 
 For instance, if you want to enqueue an encrypted value into a job on a node that cannot decrypt that value, you could do something like this;
 
