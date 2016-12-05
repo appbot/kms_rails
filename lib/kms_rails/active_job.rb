@@ -21,7 +21,10 @@ module KmsRails
           args = args.dup
 
           field_numbers.each do |i|
-            args[i] = enc.encrypt64(args[i]) unless args[i].nil?
+            # We skip encoding if nil or if already encrypted
+            unless args[i].nil? || (args[i].class == Hash && args[i].keys.to_set == ['key', 'iv', 'blob'].to_set)
+              args[i] = enc.encrypt64(args[i])
+            end
           end
 
           super(args)

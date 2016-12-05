@@ -22,6 +22,26 @@ describe KmsRails::ActiveJob do
         expect(serialized[1]).to eq('bar')
         expect(serialized[2]).to eq('baz')  
       end
+
+      it 'doesn\'t double encrypt an already encrypted value' do
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to_not receive(:generate_data_key)
+
+        subject.new(
+          {'key' => 'YmF6', 'iv' => 'Zm9v', 'blob' => 'YmFy'},
+          'bar',
+          'baz'
+          ).serialize
+      end
+
+      it 'doesn\'t encrypt nil' do
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to_not receive(:generate_data_key)
+
+        subject.new(
+          nil,
+          'bar',
+          'baz'
+          ).serialize
+      end
     end
 
     context '::kms_args' do

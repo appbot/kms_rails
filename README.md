@@ -74,6 +74,19 @@ Encryption is done when the job is seralized into the data store and is stored a
 
 The encryption is automatically reversed when the job is deserialized.
 
+### Already encrypted parameters
+
+You also have the option of passing the value from your ActiveRecord encrypted field directly into the ActiveJob. If you do this, the value will not be encrypted twice.
+
+For instance, if you want to enqueue an encrypted value into a job on a node that cannot decrypt that value, you could do something like this;
+
+```ruby
+value = MyModel.find(10).secret_field_enc
+MyImportantJob.perform_later(value)
+```
+
+In this instance, `value` will not be decrypted, nor encrypted twice.
+
 ##Additional Options
 You can add encryption contexts as strings or procs to kms_attr and kms_arg/args. Default is none.
 ```ruby
