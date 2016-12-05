@@ -30,10 +30,12 @@ module KmsRails
     end
 
     def encrypt64(data)
+      return nil if data.nil?
       self.class.to64(encrypt(data))
     end
 
     def decrypt(data_obj)
+      return nil if data_obj.nil?
       decrypt_attr(
         data_obj['blob'], 
         aws_decrypt_key(data_obj['key']),
@@ -42,6 +44,7 @@ module KmsRails
     end
     
     def decrypt64(data_obj)
+      return nil if data_obj.nil?
       decrypt( self.class.from64(data_obj) )
     end
 
@@ -66,10 +69,12 @@ module KmsRails
     end
 
     def self.to64(data_obj)
+      return nil if data_obj.nil?
       data_obj.map { |k,v| [k, Base64.strict_encode64(v)] }.to_h
     end
 
     def self.from64(data_obj)
+      return nil if data_obj.nil?
       data_obj.map { |k,v| [k, Base64.strict_decode64(v)] }.to_h
     end
 
