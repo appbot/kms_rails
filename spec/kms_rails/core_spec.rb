@@ -42,7 +42,7 @@ describe KmsRails::Core do
     context 'symbol' do
       let(:key_id) { :test }
       it 'raises exception' do
-        expect { subject.key_id }.to raise_error
+        expect { subject.key_id }.to raise_error(RuntimeError)
       end
     end
   end
