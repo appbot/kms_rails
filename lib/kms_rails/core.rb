@@ -30,7 +30,7 @@ module KmsRails
     end
 
     def encrypt64(data)
-      encrypt(data).map { |k,v| [k, Base64.strict_encode64(v)] }.to_h
+      self.class.to64(encrypt(data))
     end
 
     def decrypt(data_obj)
@@ -42,7 +42,7 @@ module KmsRails
     end
     
     def decrypt64(data_obj)
-      decrypt( data_obj.map { |k,v| [k, Base64.strict_decode64(v)] }.to_h )
+      decrypt( self.class.from64(data_obj) )
     end
 
     def key_id
@@ -63,6 +63,14 @@ module KmsRails
     def self.shred_string(str)
       str.force_encoding('BINARY')
       str.tr!("\0-\xff".b, "\0".b)
+    end
+
+    def self.to64(data_obj)
+      data_obj.map { |k,v| [k, Base64.strict_encode64(v)] }.to_h
+    end
+
+    def self.from64(data_obj)
+      data_obj.map { |k,v| [k, Base64.strict_decode64(v)] }.to_h
     end
 
     private 
