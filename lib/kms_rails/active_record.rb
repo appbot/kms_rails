@@ -10,7 +10,7 @@ module KmsRails
     end
     
     module ClassMethods
-      def kms_attr(field, key_id:, retain: false, context_key: nil, context_value: nil)
+      def kms_attr(field, key_id:, retain: false, msgpack: false, context_key: nil, context_value: nil)
         include InstanceMethods
 
         real_field = "#{field}_enc"
@@ -26,6 +26,7 @@ module KmsRails
             return 
           end
 
+          data = data.to_msgpack if msgpack
           encrypted_data = enc.encrypt(data)
 
           set_retained(field, data) if retain
@@ -43,9 +44,11 @@ module KmsRails
           return nil unless hash
 
           if retain && (plaintext = get_retained(field))
+            plaintext = MessagePack.unpack(plaintext) if msgpack
             plaintext
           else
             plaintext = enc.decrypt(hash)
+            plaintext = MessagePack.unpack(plaintext) if msgpack
             set_retained(field, plaintext) if retain
             plaintext
           end

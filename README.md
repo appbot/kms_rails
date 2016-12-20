@@ -51,6 +51,10 @@ To clear a retained decrypted value, call:
 
 This will attempt mutate the stored string to contain just null bytes, and then dereference it to be garbage collected. No guarantees are provided about additional copies of the retained data being cached elsewhere.
 
+### Data Serialization
+
+By default kms_rails will convert your encrypted values into strings, however if you would like higher level structures to be stored, you can set `msgpack: true` on any kms_attr declaration. This will encode and decode your values using [MessagePack](https://github.com/msgpack/msgpack-ruby), as long as those value types are supported by it.
+
 ## ActiveJob
 
 To use on ActiveJob, simply put the following code in your job for the arguments you wish to encrypt in flight.

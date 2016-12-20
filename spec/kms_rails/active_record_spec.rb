@@ -24,6 +24,18 @@ describe KmsRails::ActiveRecord do
     end
   end
 
+  with_model :NormalModelMsgPack do
+    table do |t|
+      t.string :secret_name
+      t.binary :the_secret_enc
+      t.timestamps null: false
+    end
+
+    model do
+      kms_attr :the_secret, key_id: 'a', msgpack: true
+    end
+  end
+
   context '::kms_attr' do
     let(:model) { NormalModelNoRetain }
     subject { model.kms_attr :the_secret, key_id: 'a' }
@@ -207,6 +219,29 @@ describe KmsRails::ActiveRecord do
             expect(subject.the_secret).to eq('bar')
           end
         end
+      end
+    end
+  end
+
+  context 'msgpack' do
+    subject { model.new }
+    let(:secret) { {'a' => 'b', 'q' => 6, 'h' => [1,2,3,4]} }
+
+    context 'enabled' do
+      let(:model) { NormalModelMsgPack }
+
+      it 'serializes and deserializes values correctly' do
+        subject.the_secret = secret
+        expect(subject.the_secret) .to eq(secret)
+      end
+    end
+
+    context 'disabled' do
+      let(:model) { NormalModelNoRetain }
+
+      it 'serializes and deserializes values correctly' do
+        subject.the_secret = secret
+        expect(subject.the_secret) .to eq(secret.to_s)
       end
     end
   end
