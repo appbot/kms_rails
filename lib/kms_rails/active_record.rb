@@ -79,7 +79,7 @@ module KmsRails
         @_retained ||= {}
 
         if @_retained[field]
-          Core.shred_string(@_retained[field])
+          Core.shred_string(@_retained[field]) if @_retained[field].class == String
           @_retained[field] = nil
         end
 
@@ -89,7 +89,7 @@ module KmsRails
       def clear_retained(field)
         @_retained ||= {}
         return if !@_retained.include?(field) || @_retained[field].nil?
-        Core.shred_string(@_retained[field])
+        Core.shred_string(@_retained[field]) if @_retained[field].class == String
         @_retained[field] = nil
       end
     end

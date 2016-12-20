@@ -255,6 +255,23 @@ describe KmsRails::ActiveRecord do
         subject.the_secret = secret
         expect(subject.the_secret) .to eq(secret)
       end
+
+      it 'skips shredding when re-setting retained value' do
+        subject.set_retained('the_secret_enc', secret)
+        expect( subject.get_retained('the_secret_enc') ).to eq(secret)
+
+        # Twice triggers first shredding normally
+        subject.set_retained('the_secret_enc', secret)
+        expect( subject.get_retained('the_secret_enc') ).to eq(secret)
+      end
+
+      it 'clears retained values, but skips shredding' do
+        subject.set_retained('the_secret_enc', secret)
+        expect( subject.get_retained('the_secret_enc') ).to eq(secret)
+
+        subject.clear_retained('the_secret_enc')
+        expect( subject.get_retained('the_secret_enc') ).to eq(nil)
+      end
     end
 
     context 'disabled' do
