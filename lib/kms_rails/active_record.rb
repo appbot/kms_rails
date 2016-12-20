@@ -26,10 +26,10 @@ module KmsRails
             return 
           end
 
-          data = data.to_msgpack if msgpack
-          encrypted_data = enc.encrypt(data)
-
           set_retained(field, data) if retain
+          data = data.to_msgpack if msgpack
+
+          encrypted_data = enc.encrypt(data)
           data = nil
           
           store_hash(field, encrypted_data)
@@ -44,7 +44,6 @@ module KmsRails
           return nil unless hash
 
           if retain && (plaintext = get_retained(field))
-            plaintext = MessagePack.unpack(plaintext) if msgpack
             plaintext
           else
             plaintext = enc.decrypt(hash)
