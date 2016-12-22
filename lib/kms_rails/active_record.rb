@@ -17,7 +17,7 @@ module KmsRails
         raise RuntimeError, "Field '#{real_field}' must exist to store encrypted data" unless self.column_names.include?(real_field)
         raise RuntimeError, "Field '#{field}' must not be a real column, '#{real_field}' is the real column" if self.column_names.include?(field)
         
-        enc = Core.new(key_id: key_id, context_key: context_key, context_value: context_value)
+        enc = Core.new(key_id: key_id, msgpack: msgpack, context_key: context_key, context_value: context_value)
 
         define_method "#{field}=" do |data|
           if data.nil? # Just set to nil if nil
@@ -27,8 +27,6 @@ module KmsRails
           end
 
           set_retained(field, data) if retain
-          data = data.to_msgpack if msgpack
-
           encrypted_data = enc.encrypt(data)
           data = nil
           
@@ -47,7 +45,6 @@ module KmsRails
             plaintext
           else
             plaintext = enc.decrypt(hash)
-            plaintext = MessagePack.unpack(plaintext) if msgpack
             set_retained(field, plaintext) if retain
             plaintext
           end

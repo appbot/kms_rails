@@ -66,8 +66,52 @@ describe KmsRails::ActiveJob do
       end
     end
 
-  end
+    context 'msgpack enabled' do
+      context '::kms_arg' do
+        subject { FirstArgMsgPackEncryptedJob }
 
+        it 'calls the encryption routine once' do
+          expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+            .once
+            .with(hash_including(key_id: 'alias/s', key_spec: 'AES_256'))
+            .and_call_original
+
+          subject.new({'a' => 'b', 'c' => 'd'}, 'bar', 'baz').serialize
+        end
+
+        it 'produces an encrypted argument' do
+          serialized = subject.new({'a' => 'b', 'c' => 'd'}, 'bar', 'baz').serialize['arguments']
+
+          expect(serialized.length).to eq(3)
+          expect(serialized[0].keys).to include('key', 'iv', 'blob')
+          expect(serialized[1]).to eq('bar')
+          expect(serialized[2]).to eq('baz')  
+        end
+      end
+
+      context '::kms_args' do
+        subject { SecondThirdArgMsgPackEncryptedJob }
+
+        it 'calls the encryption routine twice' do
+          expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+            .twice
+            .with(hash_including(key_id: 'alias/t', key_spec: 'AES_256'))
+            .and_call_original
+
+          subject.new('foo', {'a' => 'b', 'c' => 'd'}, {'q' => 'r', 's' => 't'}).serialize
+        end
+
+        it 'produces an encrypted argument' do
+          serialized = subject.new('foo', {'a' => 'b', 'c' => 'd'}, {'q' => 'r', 's' => 't'}).serialize['arguments']
+
+          expect(serialized.length).to eq(3)
+          expect(serialized[0]).to eq('foo')
+          expect(serialized[1].keys).to include('key', 'iv', 'blob')
+          expect(serialized[2].keys).to include('key', 'iv', 'blob')
+        end
+      end
+    end
+  end
 
   context 'deserialization' do
     context '1 argument' do 
@@ -116,6 +160,29 @@ describe KmsRails::ActiveJob do
       it 'deserializes and decrypts arguments' do
         job = subject.deserialize(serialized)
         expect(job.perform_now).to eq(['baz', 'bar', 'foo'])
+      end
+    end
+
+    context 'msgpack enabled' do
+      let(:serialized) { {
+        'job_class'=>'FirstArgMsgPackEncryptedJob',
+        'job_id'=>'39413211-1db3-41d6-92c3-68500713061f',
+        'queue_name'=>'default',
+        'arguments'=>
+          [{'key'=>'NcWpobONtzmHoe7G2wH7v3fcgdqUbYUPehGXuHq5q0cgxMBzL3NhaWxhp5M=',
+            'iv'=>'r2ZIjyxAs3ZZAlLOdOFqdg==',
+            'blob'=>'Pif4qYHilkRiupLljJAyng==',
+            '_aj_symbol_keys'=>[]},
+           'bar',
+           'baz'],
+        'locale'=>:en
+      } }
+
+      subject { FirstArgMsgPackEncryptedJob }
+
+      it 'deserializes and decrypts arguments' do
+        job = subject.deserialize(serialized)
+        expect(job.perform_now).to eq(['baz', 'bar', {'a' => 'b', 'c' => 'd'}])
       end
     end
   end

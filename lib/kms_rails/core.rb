@@ -1,5 +1,6 @@
 require 'base64'
 require 'openssl'
+require 'msgpack'
 require 'aws-sdk'
 require 'kms_rails/configuration'
 
@@ -7,16 +8,18 @@ module KmsRails
   class Core
     attr_reader :context_key, :context_value
 
-    def initialize(key_id:, context_key: nil, context_value: nil)
+    def initialize(key_id:, msgpack: false, context_key: nil, context_value: nil)
       @base_key_id = key_id
       @context_key = context_key
       @context_value = context_value
+      @msgpack = msgpack
     end
 
     def encrypt(data)
       return nil if data.nil?
 
       data_key = aws_generate_data_key(key_id)
+      data = data.to_msgpack if @msgpack
       encrypted = encrypt_attr(data, data_key.plaintext)
 
       self.class.shred_string(data_key.plaintext)
@@ -36,11 +39,15 @@ module KmsRails
 
     def decrypt(data_obj)
       return nil if data_obj.nil?
-      decrypt_attr(
+
+      decrypted = decrypt_attr(
         data_obj['blob'], 
         aws_decrypt_key(data_obj['key']),
         data_obj['iv']
       )
+      
+      decrypted = MessagePack.unpack(decrypted) if @msgpack
+      decrypted
     end
     
     def decrypt64(data_obj)
