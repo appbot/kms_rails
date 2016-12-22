@@ -78,9 +78,13 @@ Encryption is done when the job is seralized into the data store and is stored a
 
 The encryption is automatically reversed when the job is deserialized.
 
+### Data Serialization
+
+Like kms_attr above, by default your encrypted kms_args values are converted to and from strings. Similarly, you can set `msgpack: true` to enable msgpack serialization and deserialization for arguments instead.
+
 ### Already encrypted parameters
 
-You also have the option of passing the value from your ActiveRecord encrypted field directly into the ActiveJob. If you do this, the value will not be encrypted twice. However, if you do this, you must ensure that the encryption key ID is the same for both the ActiveRecord attribute and ActiveJob parameter.
+You also have the option of passing the value from your ActiveRecord encrypted field directly into the ActiveJob. If you do this, the value will not be encrypted twice. However, if you do this, you must ensure that the encryption key ID is the same for both the ActiveRecord attribute and ActiveJob parameter. It is also wise to use the same `msgpack: ` configuration options for both instances to ensure it is correctly decoded.
 
 For instance, if you want to enqueue an encrypted value into a job on a node that cannot decrypt that value, you could do something like this;
 
