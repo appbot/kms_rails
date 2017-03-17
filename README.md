@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/appbot/kms_rails.svg)](https://travis-ci.org/appbot/kms_rails)
 [![Code Climate](https://codeclimate.com/github/appbot/kms_rails/badges/gpa.svg)](https://codeclimate.com/github/appbot/kms_rails) [![Test Coverage](https://codeclimate.com/github/appbot/kms_rails/badges/coverage.svg)](https://codeclimate.com/github/appbot/kms_rails/coverage)
 
-#kms_rails
+# kms_rails
 
 kms_rails (based on [kms_attrs](https://github.com/justinoue/kms_attrs)) is a gem for easily adding Amazon Web Services KMS encryption to your ActiveRecord model attributes and ActiveJob arguments. It uses the GenerateDataKey method to perform "envelope" encryption locally with an OpenSSL AES-256-CBC cipher.
 
@@ -95,7 +95,7 @@ MyImportantJob.perform_later(value)
 
 In this instance, `value` will not be decrypted, nor encrypted twice.
 
-##Additional Options
+## Additional Options
 You can add encryption contexts as strings or procs to kms_attr and kms_arg/args. Default is none.
 ```ruby
 kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
@@ -105,7 +105,7 @@ kms_attr :my_attribute, key_id: 'my-aws-kms-key-id',
   context_key: Proc.new { }, context_value: Proc.new { }
 ```
 
-##Aws Configuration
+## Aws Configuration
 This gem expects some standard Aws SDK configuration. The Aws client is initiated with no credentials. This should then load credentials either from ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'], `Aws` object, or an IAM role on an EC2 instance.
 
 You can configure your region in a Rails initializer with;
