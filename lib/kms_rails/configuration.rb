@@ -1,10 +1,12 @@
 module KmsRails
   class << self
-    attr_accessor :configuration
+    attr_setter :configuration
   end
 
-  def initialize
-   self.configuration ||= Configuration.new
+  def self.configuration
+    return @configuration unless @configuration.nil?
+   @configuration = Configuration.new
+    return @configuration
   end
 
   def self.configure
