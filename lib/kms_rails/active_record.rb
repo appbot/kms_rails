@@ -25,7 +25,9 @@ module KmsRails
             self[real_field] = nil
             return 
           end
-
+          if data.class == Hash
+            data = data.to_json
+          end
           set_retained(field, data) if retain
           encrypted_data = enc.encrypt(data)
           data = nil
@@ -48,6 +50,11 @@ module KmsRails
             set_retained(field, plaintext) if retain
             plaintext
           end
+          begin
+            plaintext = JSON.parse(plaintext)
+          rescue JSON::ParserError => e
+          end
+          return plaintext
         end
 
         define_method "#{field}_clear" do
