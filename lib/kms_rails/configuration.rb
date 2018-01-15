@@ -1,6 +1,6 @@
 module KmsRails
   class << self
-    attr_setter :configuration
+    attr_writer :configuration
   end
 
   def self.configuration
