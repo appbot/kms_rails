@@ -3,6 +3,10 @@ module KmsRails
     attr_accessor :configuration
   end
 
+  def initialize
+   self.configuration ||= Configuration.new
+  end
+
   def self.configure
     self.configuration ||= Configuration.new
     yield(configuration)
