@@ -4,18 +4,15 @@ module KmsRails
   end
 
   def self.configuration
-    return @configuration unless @configuration.nil?
-   @configuration = Configuration.new
-    return @configuration
+    @configuration ||= Configuration.new
   end
 
   def self.configure
-    self.configuration ||= Configuration.new
-    yield(configuration)
+    yield(self.configuration)
   end
 
   def self.reset_config
-    self.configuration = Configuration.new
+    @configuration = Configuration.new
   end
 
   class Configuration
