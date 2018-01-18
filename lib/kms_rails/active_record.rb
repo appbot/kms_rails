@@ -20,7 +20,7 @@ module KmsRails
         enc = Core.new(key_id: key_id, msgpack: msgpack, context_key: context_key, context_value: context_value)
 
         define_method "#{field}=" do |data|
-          if data.nil? # Just set to nil if nil
+          if data.blank? # Just set to nil if nil
             clear_retained(field)
             self[real_field] = nil
             return 
