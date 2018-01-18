@@ -14,18 +14,20 @@ module KmsRails
         include InstanceMethods
 
         real_field = "#{field}_enc"
-        raise RuntimeError, "Field '#{real_field}' must exist to store encrypted data" unless self.column_names.include?(real_field)
+#        raise RuntimeError, "Field '#{real_field}' must exist to store encrypted data" unless self.column_names.include?(real_field)
         raise RuntimeError, "Field '#{field}' must not be a real column, '#{real_field}' is the real column" if self.column_names.include?(field)
         
         enc = Core.new(key_id: key_id, msgpack: msgpack, context_key: context_key, context_value: context_value)
 
         define_method "#{field}=" do |data|
-          if data.nil? # Just set to nil if nil
+          if data.blank? # Just set to nil if nil
             clear_retained(field)
             self[real_field] = nil
             return 
           end
-
+          if data.class == Hash
+            data = data.to_json
+          end
           set_retained(field, data) if retain
           encrypted_data = enc.encrypt(data)
           data = nil
@@ -48,6 +50,11 @@ module KmsRails
             set_retained(field, plaintext) if retain
             plaintext
           end
+          begin
+            plaintext = JSON.parse(plaintext)
+          rescue JSON::ParserError => e
+          end
+          return plaintext
         end
 
         define_method "#{field}_clear" do

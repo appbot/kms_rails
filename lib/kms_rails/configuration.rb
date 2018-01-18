@@ -1,15 +1,18 @@
 module KmsRails
   class << self
-    attr_accessor :configuration
+    attr_writer :configuration
+  end
+
+  def self.configuration
+    @configuration ||= Configuration.new
   end
 
   def self.configure
-    self.configuration ||= Configuration.new
-    yield(configuration)
+    yield(self.configuration)
   end
 
   def self.reset_config
-    self.configuration = Configuration.new
+    @configuration = Configuration.new
   end
 
   class Configuration
