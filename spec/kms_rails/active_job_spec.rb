@@ -185,5 +185,31 @@ describe KmsRails::ActiveJob do
         expect(job.perform_now).to eq(['baz', 'bar', {'a' => 'b', 'c' => 'd'}])
       end
     end
+
+    context 'msgpack enabled' do
+      let(:serialized) { {
+        'job_class'=>'SecondThirdArgMsgPackEncryptedJob',
+        'job_id'=>'84614af7-bfd9-4628-a45c-952fe668daa9',
+        'queue_name'=>'default',
+        'arguments'=>
+          ['foo',
+           {'key'=>'x4TjhPNHr/ldfG1uauYy5ouyXAWqtGmT9N3ppG/DjBkgxMB0L3NhaWxhp5M=',
+            'iv'=>'2n7Eilu3B4X/8EE/fs+4RQ==',
+            'blob'=>'zQg4Ajsdd+eL/N+Uipl4eQ==',
+            '_aj_symbol_keys'=>[]},
+           {'key'=>'U5wDfi4xc78qQD9mPcvrOhbD5ZQyxlTX3dSoPiMgTNUgxMB0L3NhaWxhp5M=',
+            'iv'=>'LOElUyDv2l1l9WgLY5/few==',
+            'blob'=>'n1XRnrjxvBynuVU5pbQK5g==',
+            '_aj_symbol_keys'=>[]}],
+        'locale'=>:en
+      } }
+
+      subject { SecondThirdArgMsgPackEncryptedJob }
+
+      it 'deserializes and decrypts arguments' do
+        job = subject.deserialize(serialized)
+        expect(job.perform_now).to eq([{'q' => 'r', 's' => 't'}, {'a' => 'b', 'c' => 'd'}, 'foo'])
+      end
+    end
   end
 end
