@@ -304,4 +304,69 @@ describe KmsRails::ActiveRecord do
     end
   end
 
+  context 'contexts' do
+    context 'strings' do
+      with_model :ContextStringModel do
+        table do |t|
+          t.string :secret_name
+          t.binary :the_secret_enc
+          t.timestamps null: false
+        end
+
+        model do
+          kms_attr :the_secret, key_id: 'a', context_key: 'foo', context_value: 'bar'
+        end
+      end
+
+      subject { ContextStringModel.new }
+
+      it 'encrypts and decrypts with same context' do
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+          .once
+          .with(hash_including(encryption_context: {'foo' => 'bar'}))
+          .and_call_original
+
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+          .once
+          .with(hash_including(encryption_context: {'foo' => 'bar'}))
+          .and_call_original
+
+        subject.the_secret = 'foo'
+        subject.the_secret_clear
+        subject.the_secret
+      end
+    end
+
+    context 'procs' do
+      with_model :ContextProcModel do
+        table do |t|
+          t.string :secret_name
+          t.binary :the_secret_enc
+          t.timestamps null: false
+        end
+
+        model do
+          kms_attr :the_secret, key_id: 'a', context_key: -> { 'nerp' + 'snerp' }, context_value: -> { 'borp' + 'norp' }
+        end
+      end
+
+      subject { ContextProcModel.new }
+
+      it 'encrypts and decrypts with same context' do
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+          .once
+          .with(hash_including(encryption_context: {'nerpsnerp' => 'borpnorp'}))
+          .and_call_original
+
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+          .once
+          .with(hash_including(encryption_context: {'nerpsnerp' => 'borpnorp'}))
+          .and_call_original
+
+        subject.the_secret = 'foo'
+        subject.the_secret_clear
+        subject.the_secret
+      end
+    end
+  end
 end
