@@ -164,6 +164,11 @@ describe KmsRails::ActiveRecord do
         subject.the_secret = 'foo'
         expect { subject.the_secret = nil }.to change { subject['the_secret_enc'] }.to(nil)
       end
+
+      it 'sets the field to nil if called with empty string' do
+        subject.the_secret = 'foo'
+        expect { subject.the_secret = '' }.to change { subject['the_secret_enc'] }.to(nil)
+      end
     end
 
     context '#the_secret' do
