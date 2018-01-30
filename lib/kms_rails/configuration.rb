@@ -1,23 +1,28 @@
 module KmsRails
-  class << self
-    attr_accessor :configuration
-  end
+  module ConfigurationBase
+    attr_writer :configuration
 
-  def self.configure
-    self.configuration ||= Configuration.new
-    yield(configuration)
-  end
+    class Configuration
+      attr_accessor :fake_kms_api, :alias_prefix
 
-  def self.reset_config
-    self.configuration = Configuration.new
-  end
+      def initialize
+        @fake_kms_api = false
+        @alias_prefix = ''
+      end
+    end
 
-  class Configuration
-    attr_accessor :fake_kms_api, :alias_prefix
+    def configuration
+      @configuration ||= Configuration.new
+    end
 
-    def initialize
-      @fake_kms_api = false
-      @alias_prefix = ''
+    def configure
+      yield(self.configuration)
+    end
+
+    def reset_config
+      @configuration = Configuration.new
     end
   end
+
+  extend ConfigurationBase
 end
