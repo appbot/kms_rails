@@ -50,7 +50,6 @@ describe KmsRails::ActiveRecord do
 
   context '::kms_attr' do
     let(:model) { NormalModelNoRetain }
-    subject { model.kms_attr :the_secret, key_id: 'a' }
 
     it 'defines the_secret fields' do
       expect(model.instance_methods).to include(
@@ -59,28 +58,44 @@ describe KmsRails::ActiveRecord do
     end
 
     context '_enc field doens\'t exist' do 
-      let (:model) { NoEncModel }
-
       with_model :NoEncModel do
         table do |t|
           t.string :secret_name
         end
       end
 
-      it 'throws an exception' do
-        expect { subject }.to raise_error(RuntimeError)
+      let(:model) { NoEncModel }
+
+      before do
+        model.kms_attr :the_secret, key_id: 'a'
+      end
+
+      subject { model.new }
+
+      it 'throws an exception on retrieve' do
+        expect { subject.the_secret }.to raise_error(RuntimeError)
+      end
+
+      it 'throws an exception on set' do
+        expect { subject.the_secret = 'foo' }.to raise_error(RuntimeError)
+      end
+
+      it 'throws an exception on real retrieve' do
+        expect { subject.the_secret_enc }.to raise_error(RuntimeError)
       end
     end
 
     context 'real field exists' do
-      let (:model) { RealFieldModel }
-
       with_model :RealFieldModel do
         table do |t|
           t.string :secret_name
           t.binary :the_secret
+          t.binary :the_borker
         end
       end
+
+      let (:model) { RealFieldModel }
+      subject { model.kms_attr :the_secret, key_id: 'a' }
 
       it 'throws an exception' do
         expect { subject }.to raise_error(RuntimeError)
