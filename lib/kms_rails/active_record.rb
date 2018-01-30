@@ -14,13 +14,14 @@ module KmsRails
         include InstanceMethods
 
         real_field = "#{field}_enc"
-        raise RuntimeError, "Field '#{real_field}' must exist to store encrypted data" unless self.column_names.include?(real_field)
-        raise RuntimeError, "Field '#{field}' must not be a real column, '#{real_field}' is the real column" if self.column_names.include?(field)
+        raise RuntimeError, "Field '#{field}' must not be a real column, '#{real_field}' is the real column" if self.column_names.include?(field.to_s)
         
         enc = Core.new(key_id: key_id, msgpack: msgpack, context_key: context_key, context_value: context_value)
 
         define_method "#{field}=" do |data|
-          if data.nil? # Just set to nil if nil
+          raise RuntimeError, "Field '#{real_field}' must exist to store encrypted data" unless self.class.column_names.include?(real_field)
+
+          if data.blank? # Just set to nil if nil
             clear_retained(field)
             self[real_field] = nil
             return 
@@ -34,10 +35,13 @@ module KmsRails
         end
 
         define_method "#{real_field}" do
+          raise RuntimeError, "Field '#{real_field}' must exist to retrieve encrypted data" unless self.class.column_names.include?(real_field)
           Core.to64( get_hash(field) )
         end
 
         define_method "#{field}" do
+          raise RuntimeError, "Field '#{real_field}' must exist to retrieve decrypted data" unless self.class.column_names.include?(real_field)
+
           hash = get_hash(field)
           return nil unless hash
 

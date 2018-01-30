@@ -50,7 +50,6 @@ describe KmsRails::ActiveRecord do
 
   context '::kms_attr' do
     let(:model) { NormalModelNoRetain }
-    subject { model.kms_attr :the_secret, key_id: 'a' }
 
     it 'defines the_secret fields' do
       expect(model.instance_methods).to include(
@@ -59,28 +58,44 @@ describe KmsRails::ActiveRecord do
     end
 
     context '_enc field doens\'t exist' do 
-      let (:model) { NoEncModel }
-
       with_model :NoEncModel do
         table do |t|
           t.string :secret_name
         end
       end
 
-      it 'throws an exception' do
-        expect { subject }.to raise_error(RuntimeError)
+      let(:model) { NoEncModel }
+
+      before do
+        model.kms_attr :the_secret, key_id: 'a'
+      end
+
+      subject { model.new }
+
+      it 'throws an exception on retrieve' do
+        expect { subject.the_secret }.to raise_error(RuntimeError)
+      end
+
+      it 'throws an exception on set' do
+        expect { subject.the_secret = 'foo' }.to raise_error(RuntimeError)
+      end
+
+      it 'throws an exception on real retrieve' do
+        expect { subject.the_secret_enc }.to raise_error(RuntimeError)
       end
     end
 
     context 'real field exists' do
-      let (:model) { RealFieldModel }
-
       with_model :RealFieldModel do
         table do |t|
           t.string :secret_name
           t.binary :the_secret
+          t.binary :the_borker
         end
       end
+
+      let (:model) { RealFieldModel }
+      subject { model.kms_attr :the_secret, key_id: 'a' }
 
       it 'throws an exception' do
         expect { subject }.to raise_error(RuntimeError)
@@ -163,6 +178,11 @@ describe KmsRails::ActiveRecord do
       it 'sets the field to nil if called with nil' do
         subject.the_secret = 'foo'
         expect { subject.the_secret = nil }.to change { subject['the_secret_enc'] }.to(nil)
+      end
+
+      it 'sets the field to nil if called with empty string' do
+        subject.the_secret = 'foo'
+        expect { subject.the_secret = '' }.to change { subject['the_secret_enc'] }.to(nil)
       end
     end
 
@@ -284,4 +304,69 @@ describe KmsRails::ActiveRecord do
     end
   end
 
+  context 'contexts' do
+    context 'strings' do
+      with_model :ContextStringModel do
+        table do |t|
+          t.string :secret_name
+          t.binary :the_secret_enc
+          t.timestamps null: false
+        end
+
+        model do
+          kms_attr :the_secret, key_id: 'a', context_key: 'foo', context_value: 'bar'
+        end
+      end
+
+      subject { ContextStringModel.new }
+
+      it 'encrypts and decrypts with same context' do
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+          .once
+          .with(hash_including(encryption_context: {'foo' => 'bar'}))
+          .and_call_original
+
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+          .once
+          .with(hash_including(encryption_context: {'foo' => 'bar'}))
+          .and_call_original
+
+        subject.the_secret = 'foo'
+        subject.the_secret_clear
+        subject.the_secret
+      end
+    end
+
+    context 'procs' do
+      with_model :ContextProcModel do
+        table do |t|
+          t.string :secret_name
+          t.binary :the_secret_enc
+          t.timestamps null: false
+        end
+
+        model do
+          kms_attr :the_secret, key_id: 'a', context_key: -> { 'nerp' + 'snerp' }, context_value: -> { 'borp' + 'norp' }
+        end
+      end
+
+      subject { ContextProcModel.new }
+
+      it 'encrypts and decrypts with same context' do
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+          .once
+          .with(hash_including(encryption_context: {'nerpsnerp' => 'borpnorp'}))
+          .and_call_original
+
+        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+          .once
+          .with(hash_including(encryption_context: {'nerpsnerp' => 'borpnorp'}))
+          .and_call_original
+
+        subject.the_secret = 'foo'
+        subject.the_secret_clear
+        subject.the_secret
+      end
+    end
+  end
 end
