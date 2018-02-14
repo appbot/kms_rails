@@ -117,7 +117,7 @@ or by using the documented AWS environmental variables.
 
 ## Test Mode
 
-A basic fake implementation of `Aws::KMS::Client` has been written, allowing kms_rails functionality to be used in test environments without making any web requests. The fake implementation emulates the functionality of the two API calls kms_rails issues to AWS and performs fake encryption (the key is 'encrypted' by reversing it). At this time, the fake implementation does not support contexts.
+A basic fake implementation of `Aws::KMS::Client` has been written, allowing kms_rails functionality to be used in test environments without making any web requests. The fake implementation emulates the functionality of the two API calls kms_rails issues to AWS and performs fake encryption (the key is 'encrypted' by reversing it).
 
 You can enable it in your Rails initializers with the following
 ```ruby
