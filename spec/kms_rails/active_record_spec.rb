@@ -73,15 +73,15 @@ describe KmsRails::ActiveRecord do
       subject { model.new }
 
       it 'throws an exception on retrieve' do
-        expect { subject.the_secret }.to raise_error(RuntimeError)
+        expect { subject.the_secret }.to raise_error(RuntimeError, /must exist to retrieve decrypted data/)
       end
 
       it 'throws an exception on set' do
-        expect { subject.the_secret = 'foo' }.to raise_error(RuntimeError)
+        expect { subject.the_secret = 'foo' }.to raise_error(RuntimeError, /must exist to store encrypted data/)
       end
 
       it 'throws an exception on real retrieve' do
-        expect { subject.the_secret_enc }.to raise_error(RuntimeError)
+        expect { subject.the_secret_enc }.to raise_error(RuntimeError, /must exist to retrieve encrypted data/)
       end
     end
 
@@ -95,10 +95,23 @@ describe KmsRails::ActiveRecord do
       end
 
       let (:model) { RealFieldModel }
-      subject { model.kms_attr :the_secret, key_id: 'a' }
 
-      it 'throws an exception' do
-        expect { subject }.to raise_error(RuntimeError)
+      before do
+        model.kms_attr :the_secret, key_id: 'a'
+      end
+
+      subject { model.new }
+
+      it 'throws an exception on retrieve' do
+        expect { subject.the_secret }.to raise_error(RuntimeError, /must not be a real column/)
+      end
+
+      it 'throws an exception on set' do
+        expect { subject.the_secret = 'foo' }.to raise_error(RuntimeError, /must not be a real column/)
+      end
+
+      it 'throws an exception on real retrieve' do
+        expect { subject.the_secret_enc }.to raise_error(RuntimeError, /must not be a real column/)
       end
     end
   end
