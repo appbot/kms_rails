@@ -1,4 +1,4 @@
-require 'aws-sdk'
+require 'aws-sdk-kms'
 require 'msgpack'
 
 module KmsRails

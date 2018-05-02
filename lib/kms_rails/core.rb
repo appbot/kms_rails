@@ -1,7 +1,7 @@
 require 'base64'
 require 'openssl'
 require 'msgpack'
-require 'aws-sdk'
+require 'aws-sdk-kms'
 require 'kms_rails/configuration'
 
 module KmsRails
@@ -41,15 +41,15 @@ module KmsRails
       return nil if data_obj.nil?
 
       decrypted = decrypt_attr(
-        data_obj['blob'], 
+        data_obj['blob'],
         aws_decrypt_key(data_obj['key']),
         data_obj['iv']
       )
-      
+
       decrypted = MessagePack.unpack(decrypted) if @msgpack
       decrypted
     end
-    
+
     def decrypt64(data_obj)
       return nil if data_obj.nil?
       decrypt( self.class.from64(data_obj) )
@@ -61,7 +61,7 @@ module KmsRails
         @base_key_id.call
       when String
         if @base_key_id =~ /\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\z/ || @base_key_id.start_with?('alias/') # if UUID or direct alias
-          @base_key_id 
+          @base_key_id
         else
           'alias/' + KmsRails.configuration.alias_prefix + @base_key_id
         end
@@ -85,7 +85,7 @@ module KmsRails
       data_obj.map { |k,v| [k, Base64.strict_decode64(v)] }.to_h
     end
 
-    private 
+    private
 
     def apply_context(args, key, value)
       if key && value

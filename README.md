@@ -145,7 +145,7 @@ Directly specifying a key_id as a UUID or with the `alias/` prefix explicitly de
 ## Other stuff
 
 ### Notes
-This gem has been developed against Ruby 2.3.1, Rails 4.2, and AWS SDK v2. Credit where credit is due, strongbox by spikex was used as an inspiration and guide when creating this. https://github.com/spikex/strongbox
+This gem has been developed against Ruby 2.3.1, Rails 4.2, and AWS SDK v3. Credit where credit is due, strongbox by spikex was used as an inspiration and guide when creating this. https://github.com/spikex/strongbox
 
 ### Disclaimer
 No claims are made about enhanced security when using this gem.
