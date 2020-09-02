@@ -123,7 +123,7 @@ module KmsRails
 
     def aws_decrypt_key(key)
       args = {ciphertext_blob: key}
-      aws_kms.decrypt(apply_context(args, @context_key, @context_value)).plaintext
+      aws_kms.decrypt(**apply_context(args, @context_key, @context_value)).plaintext
     end
 
     def aws_kms
@@ -133,7 +133,7 @@ module KmsRails
 
     def aws_generate_data_key(key_id)
       args = {key_id: key_id, key_spec: 'AES_256'}
-      aws_kms.generate_data_key(apply_context(args, @context_key, @context_value))
+      aws_kms.generate_data_key(**apply_context(args, @context_key, @context_value))
     end
   end
 end
