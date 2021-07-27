@@ -142,6 +142,24 @@ Will resolve 'my-key-alias' to 'alias/production/my-key-alias' in the production
 
 Directly specifying a key_id as a UUID or with the `alias/` prefix explicitly declared will prevent this behaviour from occurring.
 
+## ARN prefixes
+
+You can use the `arn_prefix` configuration option to specify that the keys you're referencing are located in a different AWS account or region than the default. For example;
+
+```ruby
+KmsRails.configure do |config|
+  config.arn_prefix = 'arn:aws:kms:ap-southeast-1:11111111111:'
+end
+
+kms_attr :my_attribute, key_id: 'my-key-alias'
+```
+
+Will resolve 'my-key-alias' to 'arn:aws:kms:ap-southeast-1:11111111111:alias/my-key-alias', which may be a key in a different region or AWS account.
+
+This works for aliases and UUID keys, but Proc based key_ids will not have the ARN prefixed.
+
+You can use this in combination with alias prefixes. A prefix like 'foo/' would result in a final key of 'arn:aws:kms:ap-southeast-1:11111111111:alias/foo/my-key-alias'.
+
 ## Other stuff
 
 ### Notes
