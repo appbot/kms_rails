@@ -38,9 +38,6 @@ SimpleCov.start
 # Set up codebase
 require 'kms_rails'
 require 'kms_rails/kms_client_mock'
-KmsRails.configure do |config|
-  config.fake_kms_api = true
-end
 
 # Disable ActiveJob noise
 ActiveJob::Base.logger = Logger.new(nil)
@@ -146,6 +143,12 @@ RSpec.configure do |config|
   # end
 
   # Ensure configuration is reset after each test
+  config.before(:each) do
+    KmsRails.configure do |c|
+      c.kms_client = KmsRails::KmsClientMock.new
+    end
+  end
+
   config.after(:each) do
     KmsRails.reset_config
   end
