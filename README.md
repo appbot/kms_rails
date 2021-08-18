@@ -113,7 +113,7 @@ You can configure your region in a Rails initializer with;
 Aws.config[:region] = 'us-east-1'
 ```
 
-or by using the documented AWS environmental variables.
+by using the documented AWS environmental variables, or by passing a `Aws::KMS::Client` instance with your own config set (see below).
 
 ## Custom KMS client
 
