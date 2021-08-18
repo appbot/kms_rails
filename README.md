@@ -115,14 +115,14 @@ Aws.config[:region] = 'us-east-1'
 
 or by using the documented AWS environmental variables.
 
-## Test Mode
+## Custom KMS client
 
-A basic fake implementation of `Aws::KMS::Client` has been written, allowing kms_rails functionality to be used in test environments without making any web requests. The fake implementation emulates the functionality of the two API calls kms_rails issues to AWS and performs fake encryption (the key is 'encrypted' by reversing it).
+A basic fake implementation of `Aws::KMS::Client` has been written (`KmsRails::KmsClientMock`), allowing kms_rails functionality to be used in test environments without making any web requests. The fake implementation emulates the functionality of the two API calls kms_rails issues to AWS and performs fake encryption (the key is 'encrypted' by reversing it).
 
-You can enable it in your Rails initializers with the following
+You can enable it (or set any custom KMS client with alternate config) in your Rails initializers with the following
 ```ruby
 KmsRails.configure do |config|
-  config.fake_kms_api = true
+  config.kms_client = KmsRails::KmsClientMock.new
 end
 ```
 
