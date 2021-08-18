@@ -1,5 +1,5 @@
-describe KmsRails::Aws::KMS::Client do
-  subject { KmsRails::Aws::KMS::Client.new }
+describe KmsRails::KmsClientMock do
+  subject { described_class.new }
 
   it 'encrypts and decrypts a string correct' do
     data_key = subject.generate_data_key(key_id: 'a', key_spec: 'AES_256')
@@ -12,7 +12,7 @@ describe KmsRails::Aws::KMS::Client do
   it 'raises error when decrypting malformed text' do
     expect {
       subject.decrypt(ciphertext_blob: 't8hvosdjdlqegohqevnsLCKsz')
-    }.to raise_error(::Aws::KMS::Errors::InvalidCiphertextException)
+    }.to raise_error(Aws::KMS::Errors::InvalidCiphertextException)
   end
 
   it 'allows inspect' do
@@ -35,7 +35,7 @@ describe KmsRails::Aws::KMS::Client do
       
       expect { 
         subject.decrypt(ciphertext_blob: data_key.ciphertext_blob, encryption_context: {'foo' => 'norp'})
-      }.to raise_error(::Aws::KMS::Errors::InvalidCiphertextException)
+      }.to raise_error(Aws::KMS::Errors::InvalidCiphertextException)
     end
 
     it 'fails with undeclared generate' do
@@ -43,7 +43,7 @@ describe KmsRails::Aws::KMS::Client do
       
       expect { 
         subject.decrypt(ciphertext_blob: data_key.ciphertext_blob, encryption_context: {'foo' => 'norp'})
-      }.to raise_error(::Aws::KMS::Errors::InvalidCiphertextException)
+      }.to raise_error(Aws::KMS::Errors::InvalidCiphertextException)
     end
 
     it 'fails with undeclared decrpt' do
@@ -51,7 +51,7 @@ describe KmsRails::Aws::KMS::Client do
       
       expect { 
         subject.decrypt(ciphertext_blob: data_key.ciphertext_blob)
-      }.to raise_error(::Aws::KMS::Errors::InvalidCiphertextException)
+      }.to raise_error(Aws::KMS::Errors::InvalidCiphertextException)
     end
   end
 end

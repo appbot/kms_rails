@@ -6,7 +6,7 @@ describe KmsRails::ActiveJob do
       subject { FirstArgEncryptedJob }
 
       it 'calls the encryption routine once' do
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+        expect(KmsRails.configuration.kms_client).to receive(:generate_data_key)
           .once
           .with(hash_including(key_id: 'alias/q', key_spec: 'AES_256'))
           .and_call_original
@@ -24,7 +24,7 @@ describe KmsRails::ActiveJob do
       end
 
       it 'doesn\'t double encrypt an already encrypted value' do
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to_not receive(:generate_data_key)
+        expect(KmsRails.configuration.kms_client).to_not receive(:generate_data_key)
 
         subject.new(
           {'key' => 'YmF6', 'iv' => 'Zm9v', 'blob' => 'YmFy'},
@@ -34,7 +34,7 @@ describe KmsRails::ActiveJob do
       end
 
       it 'doesn\'t encrypt nil' do
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to_not receive(:generate_data_key)
+        expect(KmsRails.configuration.kms_client).to_not receive(:generate_data_key)
 
         subject.new(
           nil,
@@ -48,7 +48,7 @@ describe KmsRails::ActiveJob do
       subject { SecondThirdArgEncryptedJob }
 
       it 'calls the encryption routine twice' do
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+        expect(KmsRails.configuration.kms_client).to receive(:generate_data_key)
           .twice
           .with(hash_including(key_id: 'alias/r', key_spec: 'AES_256'))
           .and_call_original
@@ -71,7 +71,7 @@ describe KmsRails::ActiveJob do
         subject { FirstArgMsgPackEncryptedJob }
 
         it 'calls the encryption routine once' do
-          expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+          expect(KmsRails.configuration.kms_client).to receive(:generate_data_key)
             .once
             .with(hash_including(key_id: 'alias/s', key_spec: 'AES_256'))
             .and_call_original
@@ -93,7 +93,7 @@ describe KmsRails::ActiveJob do
         subject { SecondThirdArgMsgPackEncryptedJob }
 
         it 'calls the encryption routine twice' do
-          expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+          expect(KmsRails.configuration.kms_client).to receive(:generate_data_key)
             .twice
             .with(hash_including(key_id: 'alias/t', key_spec: 'AES_256'))
             .and_call_original

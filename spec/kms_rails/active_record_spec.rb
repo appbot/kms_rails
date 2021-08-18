@@ -180,7 +180,7 @@ describe KmsRails::ActiveRecord do
       end
 
       it 'calls KMS' do
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+        expect(KmsRails.configuration.kms_client).to receive(:generate_data_key)
           .once
           .with(hash_including(key_id: 'alias/a', key_spec: 'AES_256'))
           .and_call_original
@@ -203,7 +203,7 @@ describe KmsRails::ActiveRecord do
       it 'decrypts the value and calls kms' do
         subject.the_secret = 'foo'
 
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+        expect(KmsRails.configuration.kms_client).to receive(:decrypt)
           .once
           .and_call_original
 
@@ -234,7 +234,7 @@ describe KmsRails::ActiveRecord do
 
         context 'retain off' do
           it 'decrypts every time when retain is disabled' do
-            expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+            expect(KmsRails.configuration.kms_client).to receive(:decrypt)
               .twice
               .and_call_original
 
@@ -247,7 +247,7 @@ describe KmsRails::ActiveRecord do
           let(:model) { NormalModelRetain }
 
           it 'doesn\'t decrypt when it has already been set' do
-            expect_any_instance_of(KmsRails::Aws::KMS::Client).not_to receive(:decrypt)
+            expect(KmsRails.configuration.kms_client).not_to receive(:decrypt)
 
             expect(subject.the_secret).to eq('bar')
             expect(subject.the_secret).to eq('bar')
@@ -256,7 +256,7 @@ describe KmsRails::ActiveRecord do
           it 'decrypts only once when cleared' do
             subject.the_secret_clear
 
-            expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+            expect(KmsRails.configuration.kms_client).to receive(:decrypt)
               .once
               .and_call_original
 
@@ -334,12 +334,12 @@ describe KmsRails::ActiveRecord do
       subject { ContextStringModel.new }
 
       it 'encrypts and decrypts with same context' do
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+        expect(KmsRails.configuration.kms_client).to receive(:generate_data_key)
           .once
           .with(hash_including(encryption_context: {'foo' => 'bar'}))
           .and_call_original
 
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+        expect(KmsRails.configuration.kms_client).to receive(:decrypt)
           .once
           .with(hash_including(encryption_context: {'foo' => 'bar'}))
           .and_call_original
@@ -366,12 +366,12 @@ describe KmsRails::ActiveRecord do
       subject { ContextProcModel.new }
 
       it 'encrypts and decrypts with same context' do
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:generate_data_key)
+        expect(KmsRails.configuration.kms_client).to receive(:generate_data_key)
           .once
           .with(hash_including(encryption_context: {'nerpsnerp' => 'borpnorp'}))
           .and_call_original
 
-        expect_any_instance_of(KmsRails::Aws::KMS::Client).to receive(:decrypt)
+        expect(KmsRails.configuration.kms_client).to receive(:decrypt)
           .once
           .with(hash_including(encryption_context: {'nerpsnerp' => 'borpnorp'}))
           .and_call_original
