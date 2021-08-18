@@ -3,10 +3,10 @@ module KmsRails
     attr_writer :configuration
 
     class Configuration
-      attr_accessor :fake_kms_api, :alias_prefix, :arn_prefix
+      attr_accessor :kms_client, :alias_prefix, :arn_prefix
 
       def initialize
-        @fake_kms_api = false
+        @kms_client   = nil
         @alias_prefix = ''
         @arn_prefix   = ''
       end

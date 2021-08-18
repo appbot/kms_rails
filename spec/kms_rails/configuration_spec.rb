@@ -3,7 +3,7 @@ describe KmsRails::ConfigurationBase do
 
   context 'without configuration' do
     it 'provides defaults' do
-      expect(subject.configuration.fake_kms_api).to eq(false)
+      expect(subject.configuration.kms_client).to eq(nil)
       expect(subject.configuration.alias_prefix).to eq('')
       expect(subject.configuration.arn_prefix).to eq('')
     end
@@ -12,21 +12,21 @@ describe KmsRails::ConfigurationBase do
   context 'with configuration' do
     before do
       subject.configure do |c|
-        c.fake_kms_api = 'barfoo'
+        c.kms_client = 'barfoo'
         c.alias_prefix = 'foobar'
         c.arn_prefix   = 'arn:aws:foo:bar:'
       end
     end
 
     it 'provides as configured' do
-      expect(subject.configuration.fake_kms_api).to eq('barfoo')
+      expect(subject.configuration.kms_client).to eq('barfoo')
       expect(subject.configuration.alias_prefix).to eq('foobar')
       expect(subject.configuration.arn_prefix).to eq('arn:aws:foo:bar:')
     end
 
     it 'provides defaults when reset' do
       subject.reset_config
-      expect(subject.configuration.fake_kms_api).to eq(false)
+      expect(subject.configuration.kms_client).to eq(nil)
       expect(subject.configuration.alias_prefix).to eq('')
       expect(subject.configuration.arn_prefix).to eq('')
     end
